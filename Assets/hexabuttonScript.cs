@@ -38,7 +38,6 @@ public class hexabuttonScript : MonoBehaviour {
     private readonly string[] morse = { ".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..", ".---", "-.-", ".-..", "--",
                                         "-.", "---", ".--.", "--.-", ".-.", "...", "-", "..-", "...-", ".--", "-..-", "-.--", "--.." };
     private readonly string[] numbers = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-    private bool btnHeld = false; // for tp support
 
     // Use this for initialization
     void Start () {
@@ -529,73 +528,67 @@ public class hexabuttonScript : MonoBehaviour {
     }
 
     bool TwitchShouldCancelCommand;
+   public string TwitchHelpMessage = "Use !{0} tap X:XX / !{0} slap X:XX where X:XX is the last three digits of the time you want to tap the button on. Use !{0} hold to hold the button. Use !{0} release X:XX where X:XX is the last three digits of the time you want to release the button on.";
+   
+   IEnumerator ProcessTwitchCommand(string command)
+   {
+      string[] parameters = command.Trim().ToLowerInvariant().Split(' ');
 
-    public string TwitchHelpMessage = "Use !{0} tap X:XX / !{0} slap X:XX where X:XX is the last three digits of the time you want to tap the button on. Use !{0} hold to hold the button. Use !{0} release X:XX where X:XX is the last three digits of the time you want to release the button on.";
-    IEnumerator ProcessTwitchCommand(string cmd)
-    {
-        if (cmd.ToLowerInvariant().StartsWith("tap ") && cmd.ToLowerInvariant().Length == 8 && cmd.ToLowerInvariant()[5].ToString() == ":" && numbers.Contains(cmd.ToLowerInvariant()[4].ToString())
-            && numbers.Contains(cmd.ToLowerInvariant()[6].ToString()) && numbers.Contains(cmd.ToLowerInvariant()[7].ToString()))
-        {
-            while (!Bomb.GetFormattedTime().EndsWith(cmd.Substring(5)))
-            {
-                yield return "trycancel";
-                yield return new WaitForSeconds(.1f);
-            }
+      if (parameters.Length < 1)
+         yield break;
 
-            yield return null;
-            yield return new KMSelectable[] { btnSelectable };
-        }
+      if ((parameters[0] == "tap" || parameters[0] == "slap" || parameters[0] == "release") && parameters.Length == 2)
+      {
+         yield return null;
 
-        else if (cmd.ToLowerInvariant().StartsWith("slap ") && cmd.ToLowerInvariant().Length == 9 && cmd.ToLowerInvariant()[6].ToString() == ":" && numbers.Contains(cmd.ToLowerInvariant()[5].ToString())
-            && numbers.Contains(cmd.ToLowerInvariant()[7].ToString()) && numbers.Contains(cmd.ToLowerInvariant()[8].ToString()))
-        {
-            while (!Bomb.GetFormattedTime().EndsWith(cmd.Substring(6)))
-            {
-                yield return new WaitForSeconds(.1f);
-            }
-
-            yield return null;
-            yield return new KMSelectable[] { btnSelectable };
-        }
-
-        else if (cmd.ToLowerInvariant() == "hold")
-        {
-            if (btnHeld)
-            {
-                yield return "sendtochaterror Uh... it's already held.";
-                yield break;
-            }
-
-            yield return null;
-            StartCoroutine(BtnHold());
-            btnHeld = true;
-        }
-
-        else if (cmd.ToLowerInvariant().StartsWith("release ") && cmd.ToLowerInvariant().Length == 12 && cmd.ToLowerInvariant()[9].ToString() == ":" && numbers.Contains(cmd.ToLowerInvariant()[8].ToString())
-            && numbers.Contains(cmd.ToLowerInvariant()[10].ToString()) && numbers.Contains(cmd.ToLowerInvariant()[11].ToString()))
-        {
-            if (!btnHeld)
-            {
-                yield return "sendtochaterror Uh... it's not held yet.";
-                yield break;
-            }
-
-            yield return "sendtochat You sent that command at " + Bomb.GetFormattedTime() + ".";
-
-            while (!Bomb.GetFormattedTime().EndsWith(cmd.Substring(9)))
-            {
-                yield return "trycancel";
-                yield return new WaitForSeconds(.1f);
-            }
-
-            StopAllCoroutines();
-            Release();
-            btnHeld = false;
-        }
-
-        else
-        {
+         if (parameters[1].Length != 4)
+         {
+            yield return "sendtochaterror Invalid time!";
             yield break;
-        }
-    }
+         }
+         else if (!numbers.Contains(parameters[1][0].ToString()) || parameters[1][1] != ':' || !numbers.Contains(parameters[1][2].ToString()) || !numbers.Contains(parameters[1][3].ToString()))
+         {
+            yield return "sendtochaterror Invalid time!";
+            yield break;
+         }
+
+         if ((held && parameters[0] != "release") || (!held && parameters[0] == "release"))
+         {
+            yield return string.Concat("sendtochaterror You can't ", parameters[0], " the button, ", (parameters[0] == "release" ? "it hasn't been held!" : "it's being held!"));
+            yield break;
+         }
+
+         if (Bomb.GetFormattedTime().EndsWith(parameters[1]))
+         {
+            yield return "sendtochaterror Not enough time remaining to safely " + parameters[0] + " the button!";
+            yield break;
+         }
+
+         while (!Bomb.GetFormattedTime().EndsWith(parameters[1]))
+         {
+            yield return "trycancel";
+            yield return new WaitForSeconds(0.1f);
+         }
+
+         if (parameters[0] != "release")
+         {
+            btnSelectable.OnInteract();
+            yield return new WaitForSeconds(0.1f);
+         }
+         btnSelectable.OnInteractEnded();
+      }
+      else if (parameters[0] == "hold" && parameters.Length == 1)
+      {
+         yield return null;
+
+         if (held)
+         {
+            yield return "sendtochaterror Uh... it's already held.";
+            yield break;
+         }
+
+         btnSelectable.OnInteract();
+         yield return new WaitForSeconds(1.5f);
+      }
+   }
 }
