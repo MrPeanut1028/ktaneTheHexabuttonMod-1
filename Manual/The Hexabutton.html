@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <title>The Hexabutton — Keep Talking and Nobody Explodes Module</title>
+        <meta name="viewport" content="initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="css/normalize.css">
+        <link rel="stylesheet" type="text/css" href="css/main.css">
+        <link href='https://fonts.googleapis.com/css?family=Special+Elite' rel='stylesheet' type='text/css'>
+        <script src="js/highlighter.js"></script>
+        <script src="js/ruleseed.js"></script>
+        <style>
+            table {
+                margin: 1em auto;
+            }
+			
+			.morse {
+				width: 70%;
+				text-align: center;
+				margin-left: 15%;
+				border: 3px solid black;
+				transform: rotate(3deg);
+			}
+        </style>
+    </head>
+    <body>
+        <div id="ManualContent">
+            <div class="section">
+                <div class="page page-bg-01">
+                    <div class="page-header">
+                        <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
+                        <span class="page-header-section-title">The Hexabutton</span>
+                    </div>
+                    <div class="page-content">
+                        <img src="img/Component/The Hexabutton.svg" class="diagram">
+                        <h2>On the Subject of The Hexabutton</h2>
+                        <p class="flavour-text">More buttons. More buttons.</p>
+                        
+                        <p>This hexagonal button is colored and has a label. Depending on the rules below, choose when to tap or hold this button.</p>
+						
+						<p>When an instruction refers to "the total seconds", it means the total time when converted to seconds. For example, the total seconds at 1:30 is 90, not 30.</p>
+						
+						<ol>
+							<li>If there is a lit or unlit SND or TRN indicator, hold the button and refer to "Releasing a Held Button".</li>
+							<li>If there are more than four batteries, tap the button when the total seconds remaining is a multiple of 34.</li>
+							<li>If there is a Two Factor on the bomb, tap the button when the last two seconds digits on the countdown timer are equal to the two least significant digits on the Two Factor. (If there are multiple Two Factors, either code is acceptable.)</li>
+							<li>If the button says "Hold", tap the button when at least three digits in the timer are the same. (e.g. 03:33, 27:22, 07:00)</li>
+							<li>If the button is red or green, tap the button when the total seconds remaining is a multiple of the sum of the serial number digits, modulo 10. (If the result is 0, tap at any time.)</li>
+							<li>If the button is yellow or says "Jump", hold the button and refer to "Releasing a Held Button".</li>
+							<li>If there are more than four indicators on the bomb, tap the button when the minutes remaining on the timer is even, but not 0.</li>
+							<li>If none of these rules apply, hold the button and refer to "Releasing a Held Button".</li>
+						</ol>
+                    </div>
+                   <div class="page-footer relative-footer">Page 1 of 3</div>
+                </div>
+				<div class="page page-bg-02">
+                    <div class="page-header">
+                        <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
+                        <span class="page-header-section-title">The Hexabutton</span>
+                    </div>
+                    <div class="page-content">
+                        <h2>Releasing a Held Button</h2>
+						
+						<p>When you hold the button down, the entire button lights up. Based on their color and behavior, release the button using the rules below.</p>
+						
+						<h4>If the light is solid (not flashing)...</h4>
+						<p>Purple light: Release the button when the two seconds digits say 00.</p>
+						<p>Cyan light: Release when the total seconds remaining are a multiple of 4.</p>
+						<p>Gray light: Release when the total seconds are a multiple of the number of modules on the bomb. If the number of modules exceeds 101, release at any time.</p>
+						<p>Any other color light: Release when the total seconds modulo 300 are within 5 seconds of a prime number.</p>
+						
+						<h4>If the light is flickering...</h4>
+						<p>Green light: Release when the minutes remaining is odd or zero.</p>
+						<p>Cyan light: Release when the total seconds remaining are a multiple of 7.</p>
+						<p>Magenta light: Release when the timer has a 5 and 0 in any position.</p>
+						<p>Any other color light: Release at any time if this is the last unsolved module on the bomb, otherwise release when the two seconds digits show the number of unsolved modules modulo 60.</p>
+						
+						<h4>If the light is transmitting Morse Code...</h4>
+						<p>The light will always be blue if it is transmitting Morse Code. <i>See Appendix M0R53 for a morse translation table.</i> Convert the letter being transmitted to its position in the alphabet (A = 1, B = 2, etc.) Then adjust the number as necessary based on the conditions below.</p>
+						
+						<ul>
+							<li>Lit BOB indicator: Add 11.</li>
+							<li>Any batteries present: Add 19.</li>
+							<li>USB or Serial port present: Add 3.</li>
+							<li>Serial number contains a vowel: Add 20.</li>
+							<li>No unlit indicators: Add 39.</li>
+							<li>Lit FRK indicator: Add 32.</li>
+							<li>Forget Me Not or Forget Everything module is on the bomb: Add 50.</li>
+							<li>None of the above apply: Add 1.</li>
+						</ul>
+						
+						<p>After doing this, modulo the number by 60 and release when the last two seconds digits on the timer display this number.</p>
+                    </div>
+                   <div class="page-footer relative-footer">Page 2 of 3</div>
+                </div>
+				<div class="page page-bg-03">
+                    <div class="page-header">
+                        <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
+                        <span class="page-header-section-title">Appendix M0R53</span>
+                    </div>
+                    <div class="page-content">
+						<h2>Appendix M0R53: Morse Translation</h2>
+						<p>The below table shows the letters A-Z, as well as the numbers 0-9, in morse code.</p>
+						<br>
+						<img class="morse" src="img/MorseTranslation.svg">
+                    </div>
+                   <div class="page-footer relative-footer">Page 3 of 3</div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
